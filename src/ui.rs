@@ -39,10 +39,10 @@ pub fn ui(frame: &mut Frame, app: &App) {
 
     let mut list_items = Vec::<ListItem>::new();
 
-    for key in app.tasks_map.keys() {
+    for key in app.table_names.keys() {
         list_items.push(ListItem::new(
             Line::from(Span::styled(
-                format!("{: <25}: {}", key, app.tasks_map.get(key).unwrap()),
+                format!("{: <25}: {}", key, app.table_names.get(key).unwrap()),
                 Style::default().fg(Color::Yellow),
             ))
         ));
@@ -64,6 +64,7 @@ pub fn ui(frame: &mut Frame, app: &App) {
         .to_owned(),
         Span::styled(" | ", Style::default().fg(Color::White)),
         Span::styled(" Some stuff will go here ", Style::default().fg(Color::White)),
+        
     ];
 
     let screen_footer = Paragraph::new(Line::from(current_navigation_text))

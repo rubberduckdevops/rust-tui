@@ -1,4 +1,20 @@
+// This program is exported as a binary named `amzn-halllmic-rust-tui`.
+//
+// You can run it via Brazil:
+//
+// ```console
+// $ brazil-build # needed once
+// $ brazil-runtime-exec amzn-halllmic-rust-tui
+// ```
+
+// use amzn_halllmic_rust_tui::hello;
+
+// fn main() {
+//     println!("{}", hello("Halllmic-RustTui"));
+// }
 use std::{error::Error, io};
+
+use tokio::runtime::Runtime;
 
 use ratatui::{
     backend::{Backend, CrosstermBackend},
@@ -17,7 +33,8 @@ use crate::{
     ui::ui,
 };
 
-fn main() -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
     // Setup
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -27,7 +44,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     let mut app = App::new();
-    app.load_fake_task();
+    
+    app.get_table_names().await;
     let res = run_app(&mut terminal, &mut app);
 
     // Tear down
@@ -61,6 +79,9 @@ fn run_app<B: Backend>(terminal: &mut Terminal<B>, app: &mut App) -> io::Result<
                     KeyCode::Char('z') => {
                         // Display a Cat!
                         app.show_cat();
+                    }
+                    KeyCode::Char('r') => {
+                        tokio::runtime::Runtime::new().unwrap().block_on(app.get_table_names());
                     }
                     _ => {}
                 }
